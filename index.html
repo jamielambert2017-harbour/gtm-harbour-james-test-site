@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTM Playground — James Humphreys | Harbour.Space</title>
+
+<!-- ============================================================= -->
+<!--  GTM PLAYGROUND  ·  James Humphreys  ·  Harbour.Space Bangkok  -->
+<!--                                                                 -->
+<!--  HOW IT WORKS:                                                  -->
+<!--  1. The dataLayer is declared and seeded with values BELOW,     -->
+<!--     BEFORE the GTM container loads. That ordering matters —     -->
+<!--     values present before the snippet are available to the      -->
+<!--     container on its very first run.                            -->
+<!--  2. Your container ID is read from the URL: ?id=GTM-XXXXXXX     -->
+<!--     and the standard GTM snippet is injected with that ID.      -->
+<!--     So this ONE page works for every student's OWN container.   -->
+<!--                                                                 -->
+<!--  (No <noscript> iframe is injected: it only matters when JS is  -->
+<!--   off, in which case this injector wouldn't run anyway.)        -->
+<!-- ============================================================= -->
+
+<script>
+  // ---- STEP 1: dataLayer declared + seeded BEFORE the container ----
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    // --- TEACHING PARAMS: deliberately obvious names ---
+    custom_dl_param1: "hello_world",       // a string
+    custom_dl_param2: 42,                   // a number
+    custom_dl_param3: true,                 // a boolean
+    custom_dl_object: {                     // a nested object
+      level: "beginner",
+      course: "Digital Analytics"
+    },
+    // --- REAL-WORLD PARAMS: what you'd actually see on a site ---
+    page_type: "product_detail",
+    page_category: "apparel",
+    user_login_state: "logged_out",
+    visitor_type: "new",
+    environment: "test_playground"
+  });
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@700;900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #000;
+    --fg: #fff;
+    --green: #6ABE4F;
+    --dim: #888;
+    --line: rgba(255,255,255,0.45);
+    --panel: #0c0c0c;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Roboto Mono", monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    padding-bottom: 40vh; /* tail space so scroll-depth triggers have room */
+  }
+  h1, h2, h3, .eyebrow {
+    font-family: "Lato", sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.05;
+  }
+  a { color: var(--green); }
+  code, .mono { font-family: "Roboto Mono", monospace; }
+  .green { color: var(--green); }
+  .dim { color: var(--dim); }
+
+  /* ---------- layout ---------- */
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  header.top {
+    border-bottom: 1px dashed var(--line);
+    padding: 28px 0 22px;
+    margin-bottom: 8px;
+  }
+  .eyebrow { font-size: 12px; color: var(--green); letter-spacing: 0.18em; margin: 0 0 10px; }
+  header.top h1 { font-size: clamp(26px, 5vw, 44px); margin: 0 0 6px; }
+  header.top .sub { color: var(--dim); font-size: 13px; }
+
+  /* ---------- status pill ---------- */
+  #status {
+    display: inline-flex; align-items: center; gap: 10px;
+    border: 1px dashed var(--line); padding: 10px 16px; margin-top: 18px;
+    font-size: 13px;
+  }
+  #status .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--dim); flex: none; }
+  #status.ok .dot { background: var(--green); box-shadow: 0 0 12px var(--green); }
+  #status.bad .dot { background: #ff5252; }
+
+  /* ---------- setup banner ---------- */
+  #setup {
+    border: 1px dashed var(--green);
+    padding: 22px 24px; margin: 24px 0;
+    background: rgba(106,190,79,0.06);
+  }
+  #setup h2 { font-size: 18px; color: var(--green); margin: 0 0 12px; }
+  #setup ol { margin: 0; padding-left: 20px; }
+  #setup li { margin-bottom: 8px; }
+  .id-entry { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .id-entry input {
+    flex: 1 1 240px; background: #000; color: var(--fg);
+    border: 1px dashed var(--line); padding: 12px 14px;
+    font-family: "Roboto Mono", monospace; font-size: 15px;
+  }
+  .id-entry input:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; border-style: solid; }
+
+  /* ---------- sections ---------- */
+  section { border-top: 1px dashed var(--line); padding: 34px 0 8px; }
+  .eyebrow-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  section > h2 { font-size: clamp(20px, 3vw, 28px); margin: 4px 0 6px; }
+  .sec-num { font-family: "Roboto Mono", monospace; font-weight: 700; color: var(--green); font-size: 13px; }
+  .lead { color: var(--dim); max-width: 70ch; margin: 0 0 22px; }
+
+  /* try-this hint */
+  .try {
+    border-left: 3px solid var(--green); padding: 8px 0 8px 14px;
+    margin: 0 0 22px; font-size: 13px; color: #cfcfcf;
+  }
+  .try b { color: var(--green); font-weight: 700; }
+
+  /* ---------- buttons ---------- */
+  .btn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  button.push, .id-entry button {
+    font-family: "Lato", sans-serif; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.04em; font-size: 13px;
+    background: #000; color: var(--fg);
+    border: 1px dashed var(--line); padding: 16px 18px;
+    cursor: pointer; text-align: left; transition: background 120ms, color 120ms, border-color 120ms;
+  }
+  button.push .ev { display: block; font-family: "Roboto Mono", monospace; text-transform: none; color: var(--green); font-size: 12px; margin-top: 6px; }
+  button.push:hover, .id-entry button:hover { background: var(--green); color: #000; border-color: var(--green); border-style: solid; }
+  button.push:hover .ev { color: #000; }
+  button.push:focus-visible, .id-entry button:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+  .id-entry button { text-align: center; }
+
+  /* ---------- mock product (ecommerce + DOM scraping fodder) ---------- */
+  .product {
+    border: 1px dashed var(--line); padding: 20px; margin-bottom: 22px;
+    display: flex; gap: 20px; flex-wrap: wrap; align-items: center;
+  }
+  .product .thumb {
+    width: 84px; height: 84px; flex: none;
+    border: 1px dashed var(--line);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--green); font-family: "Lato"; font-weight: 900; font-size: 28px;
+  }
+  .product .meta h3 { font-size: 18px; margin: 0 0 4px; }
+  .product .price { color: var(--green); font-family: "Lato"; font-weight: 900; font-size: 22px; }
+
+  /* ---------- forms / selects ---------- */
+  form, .field-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  label.fld { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--dim); flex: 1 1 200px; }
+  input.t, select.t {
+    background: #000; color: var(--fg); border: 1px dashed var(--line);
+    padding: 12px 14px; font-family: "Roboto Mono", monospace; font-size: 14px;
+  }
+  input.t:focus-visible, select.t:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; border-style: solid; }
+
+  /* ---------- DOM scraping table ---------- */
+  .scrape { border: 1px dashed var(--line); padding: 18px; }
+  .scrape .row { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.18); flex-wrap: wrap; }
+  .scrape .row:last-child { border-bottom: none; }
+  .scrape .sel { color: var(--green); font-size: 12px; }
+  .scrape .val { color: var(--fg); }
+
+  /* link list */
+  .links a { display: inline-block; margin: 0 18px 12px 0; }
+
+  /* ---------- inspector (the signature element) ---------- */
+  #inspector {
+    position: fixed; right: 0; bottom: 0; z-index: 9999;
+    width: min(380px, 92vw); max-height: 64vh;
+    background: var(--panel); border: 1px dashed var(--green); border-right: none; border-bottom: none;
+    display: flex; flex-direction: column;
+    transform: translateY(calc(100% - 46px)); transition: transform 200ms ease;
+  }
+  #inspector.open { transform: translateY(0); }
+  #inspector .bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 14px 16px; cursor: pointer; background: #000;
+    font-family: "Lato"; font-weight: 900; text-transform: uppercase; font-size: 13px; letter-spacing: 0.04em;
+  }
+  #inspector .bar .count { color: var(--green); }
+  #inspector .body { overflow-y: auto; padding: 6px 16px 16px; }
+  #inspector .hint { color: var(--dim); font-size: 12px; margin: 6px 0 12px; }
+  .log-item {
+    border: 1px dashed var(--line); padding: 10px 12px; margin-bottom: 10px;
+    font-size: 12px; animation: pop 320ms ease;
+  }
+  .log-item .ename { color: var(--green); font-weight: 700; }
+  .log-item pre { margin: 6px 0 0; white-space: pre-wrap; word-break: break-word; color: #cfcfcf; font-size: 11px; line-height: 1.5; }
+  @keyframes pop { from { opacity: 0; transform: translateY(8px);} to { opacity:1; transform:none; } }
+  #inspector .actions { display: flex; gap: 8px; margin-bottom: 10px; }
+  #inspector .actions button {
+    flex: 1; font-family: "Roboto Mono"; font-size: 11px; background: #000; color: var(--fg);
+    border: 1px dashed var(--line); padding: 8px; cursor: pointer;
+  }
+  #inspector .actions button:hover { border-color: var(--green); color: var(--green); }
+
+  footer { border-top: 1px dashed var(--line); margin-top: 40px; padding: 24px 0; color: var(--dim); font-size: 12px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Harbour.Space · Digital Analytics · GTM Week</p>
+    <h1>The GTM Playground</h1>
+    <div class="sub">A safe sandbox for tags, triggers, variables & the dataLayer — built by James Humphreys</div>
+    <div id="status"><span class="dot"></span><span id="status-text">Checking for a container…</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- SETUP BANNER (shown only when no/invalid container ID) -->
+  <div id="setup" hidden>
+    <h2>Point your own container at this page</h2>
+    <ol>
+      <li>In Google Tag Manager, create a free <b>Web</b> container (or open one you already have).</li>
+      <li>Copy its ID — it looks like <code class="green">GTM-XXXXXXX</code>.</li>
+      <li>Paste it below and load. The page reloads with <code>?id=GTM-XXXXXXX</code> and injects <i>your</i> container.</li>
+    </ol>
+    <div class="id-entry">
+      <input id="id-input" type="text" placeholder="GTM-XXXXXXX" aria-label="Your GTM container ID" autocomplete="off" spellcheck="false">
+      <button id="id-go">Load my container</button>
+    </div>
+    <p class="hint dim" style="margin-top:14px">No container yet? You can still click around — every button below pushes to the dataLayer, and the inspector (bottom-right) shows it. You just won't see anything fire in GTM Preview until a container is loaded.</p>
+  </div>
+
+  <!-- SECTION: THE DATALAYER -->
+  <section id="datalayer">
+    <div class="eyebrow-row"><span class="sec-num">01</span><h2>What's already in the dataLayer</h2></div>
+    <p class="lead">Before GTM even loaded, this page pushed a set of values. Open the inspector (bottom-right) and hit <b class="green">View raw dataLayer</b> to see them. Two flavours are mixed in on purpose:</p>
+    <div class="scrape" style="margin-bottom:6px">
+      <div class="row"><span class="sel">custom_dl_param1 / param2 / param3 / custom_dl_object</span><span class="val dim">obvious teaching names — easy to spot in Preview</span></div>
+      <div class="row"><span class="sel">page_type · page_category · user_login_state · visitor_type</span><span class="val dim">the kind of context a real site pushes</span></div>
+    </div>
+    <p class="try"><b>Try this →</b> Build a <b>Data Layer Variable</b> named <code>custom_dl_param1</code>, then a second one for <code>page_type</code>. Preview the page and confirm both pick up their values.</p>
+  </section>
+
+  <!-- SECTION: ECOMMERCE EVENTS -->
+  <section id="ecommerce">
+    <div class="eyebrow-row"><span class="sec-num">02</span><h2>Ecommerce events</h2></div>
+    <p class="lead">A worked product journey. Each button pushes a proper GA4 ecommerce object (with an <code>items</code> array). Note the page clears <code>ecommerce</code> with a <code>null</code> push before each one — that's the real-world habit that stops stale items leaking between events.</p>
+
+    <div class="product">
+      <div class="thumb">HS</div>
+      <div class="meta">
+        <h3 class="product-name" data-item-id="SKU_HOODIE_01">Harbour.Space Hoodie</h3>
+        <div class="price" id="product-price" data-price="29.99" data-currency="GBP">£29.99</div>
+        <div class="dim" data-stock="in_stock" id="stock-status">In stock</div>
+      </div>
+    </div>
+
+    <div class="btn-grid">
+      <button class="push" data-kind="ecom" data-event="view_item">View item<span class="ev">view_item</span></button>
+      <button class="push" data-kind="ecom" data-event="add_to_cart">Add to cart<span class="ev">add_to_cart</span></button>
+      <button class="push" data-kind="ecom" data-event="begin_checkout">Begin checkout<span class="ev">begin_checkout</span></button>
+      <button class="push" data-kind="ecom" data-event="purchase">Complete purchase<span class="ev">purchase</span></button>
+    </div>
+    <p class="try" style="margin-top:22px"><b>Try this →</b> Create a <b>Custom Event</b> trigger for <code>add_to_cart</code> and fire a GA4 Event tag on it. Then build a Data Layer Variable for <code>ecommerce.value</code> and watch it populate on <code>purchase</code>.</p>
+  </section>
+
+  <!-- SECTION: ENGAGEMENT / CUSTOM EVENTS -->
+  <section id="engagement">
+    <div class="eyebrow-row"><span class="sec-num">03</span><h2>Engagement & custom events</h2></div>
+    <p class="lead">Non-ecommerce events — the everyday stuff. The last one pushes the obvious teaching params so you can practise reading them off a custom event.</p>
+    <div class="btn-grid">
+      <button class="push" data-kind="simple" data-event="login" data-params='{"method":"email","user_login_state":"logged_in"}'>Log in<span class="ev">login</span></button>
+      <button class="push" data-kind="simple" data-event="search" data-params='{"search_term":"hoodie"}'>Site search<span class="ev">search</span></button>
+      <button class="push" data-kind="simple" data-event="video_play" data-params='{"video_title":"course_intro","video_percent":0}'>Play video<span class="ev">video_play</span></button>
+      <button class="push" data-kind="simple" data-event="custom_teaching_event" data-params='{"custom_dl_param1":"clicked","custom_dl_param2":99,"custom_dl_param3":false}'>Push teaching event<span class="ev">custom_teaching_event</span></button>
+    </div>
+  </section>
+
+  <!-- SECTION: FORM -->
+  <section id="forms">
+    <div class="eyebrow-row"><span class="sec-num">04</span><h2>Form submission</h2></div>
+    <p class="lead">Fill it in and submit. Nothing is sent anywhere — on submit the page pushes a <code>newsletter_signup</code> event carrying the field values, then resets.</p>
+    <form id="signup" novalidate>
+      <label class="fld">Name<input class="t" type="text" id="f-name" placeholder="Ada Lovelace" autocomplete="off"></label>
+      <label class="fld">Email<input class="t" type="email" id="f-email" placeholder="ada@example.com" autocomplete="off"></label>
+      <label class="fld">Interest
+        <select class="t" id="f-interest">
+          <option value="ga4">GA4</option>
+          <option value="gtm">GTM</option>
+          <option value="bigquery">BigQuery</option>
+        </select>
+      </label>
+      <button class="push" type="submit" style="flex:0 0 auto">Sign up<span class="ev">newsletter_signup</span></button>
+    </form>
+    <p class="try" style="margin-top:22px"><b>Try this →</b> A real form usually has no tidy dataLayer event. Practise both: (a) the easy way — use the <code>newsletter_signup</code> event this page gives you; (b) the hard way — build a trigger on GTM's built-in <b>Form Submission</b> listener instead, and notice the difference.</p>
+  </section>
+
+  <!-- SECTION: LINKS -->
+  <section id="links">
+    <div class="eyebrow-row"><span class="sec-num">05</span><h2>Link clicks</h2></div>
+    <p class="lead">For Click triggers. These don't push custom events — they're here so you can practise GTM's built-in <b>Click</b> listeners (Just Links) and Click variables.</p>
+    <div class="links">
+      <a href="#datalayer">Internal link (jumps up this page)</a>
+      <a href="https://example.com" target="_blank" rel="noopener" class="outbound">Outbound link (example.com) ↗</a>
+      <a href="/files/course-notes.pdf" class="download" data-file="course-notes.pdf">Download link (fake PDF)</a>
+      <a href="tel:+6620000000" class="tel">Phone link</a>
+    </div>
+    <p class="try" style="margin-top:22px"><b>Try this →</b> Enable the built-in <b>Click URL</b> and <b>Click Classes</b> variables, add a "Just Links" trigger, and Preview. Build one trigger that only fires on the <i>outbound</i> link using <code>Click URL contains example.com</code>.</p>
+  </section>
+
+  <!-- SECTION: DOM SCRAPING -->
+  <section id="dom">
+    <div class="eyebrow-row"><span class="sec-num">06</span><h2>DOM scraping playground</h2></div>
+    <p class="lead">Sometimes the value you want is on the page but never in the dataLayer. That's when you scrape the DOM. Each row below shows a value and the exact selector to grab it with a <b>DOM Element</b> or <b>Custom JavaScript</b> variable.</p>
+    <div class="scrape">
+      <div class="row"><span class="val">Price — <span id="dom-price">£29.99</span></span><span class="sel">ID: #dom-price · or attribute data-price on #product-price</span></div>
+      <div class="row"><span class="val">Product name — <span class="dom-title">Harbour.Space Hoodie</span></span><span class="sel">Class: .dom-title</span></div>
+      <div class="row"><span class="val">SKU (hidden in an attribute)</span><span class="sel">#product-name → data-item-id ("SKU_HOODIE_01")</span></div>
+      <div class="row"><span class="val">Stock — <span data-stock="in_stock">In stock</span></span><span class="sel">#stock-status → data-stock</span></div>
+      <div class="row"><span class="val">A value hidden from view</span><span class="sel">#hidden-value (display:none, but still scrapable)</span></div>
+    </div>
+    <span id="hidden-value" style="display:none">scraped_from_hidden_dom</span>
+    <p class="try" style="margin-top:22px"><b>Try this →</b> Build a <b>DOM Element</b> variable using <i>CSS Selector</i> <code>#dom-price</code> (leave attribute blank to grab the text). Then a tougher one: <b>Custom JavaScript</b> variable that reads <code>document.getElementById('product-price').dataset.price</code> and returns it as a number.</p>
+  </section>
+
+  <!-- SECTION: LOOKUP TABLE -->
+  <section id="lookup">
+    <div class="eyebrow-row"><span class="sec-num">07</span><h2>Lookup & RegEx table practice</h2></div>
+    <p class="lead">Pick a region. The page pushes a <code>region_selected</code> event with a raw region code — your job in GTM is to map that code to something friendlier.</p>
+    <div class="field-row">
+      <label class="fld">Region
+        <select class="t" id="region">
+          <option value="th">th</option>
+          <option value="gb">gb</option>
+          <option value="us">us</option>
+          <option value="de">de</option>
+        </select>
+      </label>
+      <button class="push" id="region-go" type="button" style="flex:0 0 auto">Set region<span class="ev">region_selected</span></button>
+    </div>
+    <p class="try" style="margin-top:22px"><b>Try this →</b> Build a <b>Lookup Table</b> variable: input = your <code>region</code> Data Layer Variable, mapping <code>th → Thailand</code>, <code>gb → United Kingdom</code>, etc. Then rebuild it as a <b>RegEx Table</b> and add a default value for anything unmatched.</p>
+  </section>
+
+  <footer>
+    GTM Playground · built by James Humphreys for Harbour.Space University, Bangkok · reusable across cohorts.<br>
+    This is a teaching sandbox. No data leaves your browser; the only third-party script is the GTM container you choose to load.
+  </footer>
+</div>
+
+<!-- ============ THE INSPECTOR (signature element) ============ -->
+<div id="inspector">
+  <div class="bar" id="insp-bar">
+    <span>dataLayer inspector</span>
+    <span class="count" id="insp-count">0 pushed</span>
+  </div>
+  <div class="body">
+    <p class="hint">Everything you click lands here, newest first — so you can see the push <i>before</i> you go hunting for it in GTM Preview.</p>
+    <div class="actions">
+      <button id="insp-raw">View raw dataLayer</button>
+      <button id="insp-clear">Clear log</button>
+    </div>
+    <div id="insp-log"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- STEP 2: read container ID from the URL ----------
+  var params = new URLSearchParams(window.location.search);
+  var rawId = (params.get("id") || "").trim().toUpperCase();
+  var valid = /^GTM-[A-Z0-9]+$/.test(rawId);
+
+  var statusEl = document.getElementById("status");
+  var statusText = document.getElementById("status-text");
+  var setupEl = document.getElementById("setup");
+
+  if (valid) {
+    // ---------- STEP 3: inject the standard GTM snippet ----------
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+      var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+      j.async = true;
+      j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, "script", "dataLayer", rawId);
+
+    statusEl.classList.add("ok");
+    statusText.innerHTML = "Container <b>" + rawId + "</b> loaded — open GTM Preview and connect to this URL.";
+    setupEl.hidden = true;
+  } else {
+    statusEl.classList.add("bad");
+    statusText.textContent = rawId ? ("\"" + rawId + "\" isn't a valid container ID") : "No container loaded yet";
+    setupEl.hidden = false;
+  }
+
+  // ---------- container ID entry box ----------
+  function loadId(id) {
+    id = (id || "").trim().toUpperCase();
+    if (!/^GTM-[A-Z0-9]+$/.test(id)) {
+      alert("That doesn't look like a container ID. It should look like GTM-XXXXXXX.");
+      return;
+    }
+    params.set("id", id);
+    window.location.search = params.toString();
+  }
+  var idInput = document.getElementById("id-input");
+  document.getElementById("id-go").addEventListener("click", function () { loadId(idInput.value); });
+  idInput.addEventListener("keydown", function (e) { if (e.key === "Enter") loadId(idInput.value); });
+
+  // ---------- inspector ----------
+  var inspector = document.getElementById("inspector");
+  var log = document.getElementById("insp-log");
+  var countEl = document.getElementById("insp-count");
+  var pushed = 0;
+
+  document.getElementById("insp-bar").addEventListener("click", function () {
+    inspector.classList.toggle("open");
+  });
+  document.getElementById("insp-clear").addEventListener("click", function () {
+    log.innerHTML = ""; pushed = 0; countEl.textContent = "0 pushed";
+  });
+  document.getElementById("insp-raw").addEventListener("click", function () {
+    logToInspector("window.dataLayer (raw)", window.dataLayer);
+  });
+
+  function logToInspector(name, obj) {
+    var item = document.createElement("div");
+    item.className = "log-item";
+    var pre = document.createElement("pre");
+    pre.textContent = JSON.stringify(obj, null, 2);
+    var h = document.createElement("div");
+    h.innerHTML = '<span class="ename">' + name + "</span>";
+    item.appendChild(h);
+    item.appendChild(pre);
+    log.insertBefore(item, log.firstChild);
+    inspector.classList.add("open");
+  }
+
+  // central push helper: pushes to dataLayer AND mirrors to inspector + console
+  function pushEvent(obj) {
+    window.dataLayer.push(obj);
+    console.log("[dataLayer.push]", obj);
+    pushed++;
+    countEl.textContent = pushed + " pushed";
+    logToInspector(obj.event || "(push)", obj);
+  }
+
+  // ---------- ecommerce payloads ----------
+  var ITEM = { item_id: "SKU_HOODIE_01", item_name: "Harbour.Space Hoodie", item_category: "apparel", price: 29.99, quantity: 1 };
+  function ecom(eventName) {
+    // real-world habit: clear the ecommerce object first
+    window.dataLayer.push({ ecommerce: null });
+    var payload = { event: eventName, ecommerce: { currency: "GBP", value: 29.99, items: [Object.assign({}, ITEM)] } };
+    if (eventName === "purchase") {
+      payload.ecommerce.transaction_id = "T_" + Math.floor(Math.random() * 90000 + 10000);
+      payload.ecommerce.tax = 5.00;
+      payload.ecommerce.shipping = 4.99;
+      payload.ecommerce.value = 39.98;
+    }
+    pushEvent(payload);
+  }
+
+  // ---------- wire up buttons ----------
+  document.querySelectorAll("button.push[data-kind]").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      var kind = btn.getAttribute("data-kind");
+      var evName = btn.getAttribute("data-event");
+      if (kind === "ecom") {
+        ecom(evName);
+      } else if (kind === "simple") {
+        var extra = {};
+        try { extra = JSON.parse(btn.getAttribute("data-params") || "{}"); } catch (err) {}
+        pushEvent(Object.assign({ event: evName }, extra));
+      }
+    });
+  });
+
+  // form
+  document.getElementById("signup").addEventListener("submit", function (e) {
+    e.preventDefault();
+    pushEvent({
+      event: "newsletter_signup",
+      form_name: document.getElementById("f-name").value || "(blank)",
+      form_email: document.getElementById("f-email").value || "(blank)",
+      form_interest: document.getElementById("f-interest").value
+    });
+    this.reset();
+  });
+
+  // region / lookup
+  document.getElementById("region-go").addEventListener("click", function () {
+    pushEvent({ event: "region_selected", region: document.getElementById("region").value });
+  });
+
+  // open the inspector once on load so green students notice it exists
+  setTimeout(function () { inspector.classList.add("open"); }, 600);
+})();
+</script>
+</body>
+</html>
