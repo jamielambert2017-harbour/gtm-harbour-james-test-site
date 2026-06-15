@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-K89R8NG9');</script>
-<!-- End Google Tag Manager -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GTM Playground — James Humphreys | Harbour.Space</title>
@@ -31,6 +24,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script>
   // ---- STEP 1: dataLayer declared + seeded BEFORE the container ----
   window.dataLayer = window.dataLayer || [];
+
+  // ---- CONSENT MODE v2: set DEFAULT state BEFORE the container loads ----
+  // gtag() is just a thin wrapper that pushes its arguments onto the dataLayer.
+  // Setting defaults here (before GTM) is what makes Consent Mode work at all.
+  function gtag(){ window.dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('consent', 'default', {
+    'ad_storage':         'denied',   // advertising cookies
+    'ad_user_data':       'denied',   // v2: sending user data to Google for ads
+    'ad_personalization': 'denied',   // v2: personalised ads / remarketing
+    'analytics_storage':  'denied',   // GA4 analytics cookies  <-- the one GA4 cares about
+    'wait_for_update':     500        // ms to wait for a consent update before firing
+  });
+
   window.dataLayer.push({
     // --- TEACHING PARAMS: deliberately obvious names ---
     custom_dl_param1: "hello_world",       // a string
@@ -220,20 +227,55 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
-    html { scroll-behavior: auto; }
+  /* ---------- consent mode v2: cookie banner + state panel ---------- */
+  #cookie-banner {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10000;
+    background: #050505; border-top: 2px dashed var(--green);
+    padding: 20px 24px; display: none;
   }
+  #cookie-banner.show { display: block; animation: slideup 260ms ease; }
+  @keyframes slideup { from { transform: translateY(100%);} to { transform: none; } }
+  #cookie-banner .cb-wrap { max-width: 1100px; margin: 0 auto; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  #cookie-banner .cb-text { flex: 1 1 360px; }
+  #cookie-banner .cb-text h3 { font-size: 15px; margin: 0 0 6px; color: var(--green); }
+  #cookie-banner .cb-text p { margin: 0; font-size: 12px; color: #bdbdbd; }
+  #cookie-banner .cb-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  #cookie-banner button {
+    font-family: "Lato", sans-serif; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.04em; font-size: 12px; padding: 13px 20px; cursor: pointer;
+    border: 1px dashed var(--line); background: #000; color: var(--fg);
+    transition: background 120ms, color 120ms, border-color 120ms;
+  }
+  #cookie-banner button.accept { border-color: var(--green); }
+  #cookie-banner button.accept:hover { background: var(--green); color: #000; border-style: solid; }
+  #cookie-banner button.reject:hover { background: #222; border-color: #fff; }
+  #cookie-banner button:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+  .consent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 4px 0 14px; }
+  .consent-cell {
+    border: 1px dashed var(--line); padding: 12px 14px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .consent-cell .ck { font-size: 11px; color: var(--dim); word-break: break-all; }
+  .consent-cell .cv { font-family: "Lato"; font-weight: 900; text-transform: uppercase; font-size: 14px; letter-spacing: 0.04em; }
+  .consent-cell.granted { border-color: var(--green); }
+  .consent-cell.granted .cv { color: var(--green); }
+  .consent-cell.denied .cv { color: #ff6b6b; }
+  .consent-cell .v2tag { font-size: 9px; color: var(--dim); border: 1px solid var(--line); padding: 1px 5px; align-self: flex-start; border-radius: 2px; }
+  #consent-reset {
+    font-family: "Roboto Mono"; font-size: 12px; background: #000; color: var(--fg);
+    border: 1px dashed var(--line); padding: 9px 14px; cursor: pointer;
+  }
+  #consent-reset:hover { border-color: var(--green); color: var(--green); }
 </style>
 </head>
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K89R8NG9"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+
 <header class="top">
   <div class="wrap">
     <p class="eyebrow">Harbour.Space · Digital Analytics · GTM Week</p>
     <h1>The GTM Playground</h1>
-    <div class="sub">A safe sandbox for tags, triggers, variables & the dataLayer — built by James Humphreys</div>
+    <div class="sub">A safe sandbox for tags, triggers, variables & the dataLayer — built by James Humphreys (and Claude). V1.1</div>
     <div id="status"><span class="dot"></span><span id="status-text">Checking for a container…</span></div>
   </div>
 </header>
@@ -254,6 +296,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <p class="hint dim" style="margin-top:14px">No container yet? You can still click around — every button below pushes to the dataLayer, and the inspector (bottom-right) shows it. You just won't see anything fire in GTM Preview until a container is loaded.</p>
   </div>
+
+  <!-- SECTION: CONSENT MODE v2 -->
+  <section id="consent" style="border-top:none;padding-top:8px">
+    <div class="eyebrow-row"><span class="sec-num">00</span><h2>Consent state (Consent Mode v2)</h2></div>
+    <p class="lead">Before the container even loaded, this page set every consent signal to <b style="color:#ff6b6b">denied</b> by default. The cookie banner's <b class="green">Accept</b> button calls <code>gtag('consent','update',…)</code> and flips them to granted. Watch these cells change — this is the live consent state your tags must respect.</p>
+    <div class="consent-grid" id="consent-grid">
+      <div class="consent-cell denied" data-key="analytics_storage"><span class="ck">analytics_storage</span><span class="cv">denied</span></div>
+      <div class="consent-cell denied" data-key="ad_storage"><span class="ck">ad_storage</span><span class="cv">denied</span></div>
+      <div class="consent-cell denied" data-key="ad_user_data"><span class="ck">ad_user_data</span><span class="v2tag">v2</span><span class="cv">denied</span></div>
+      <div class="consent-cell denied" data-key="ad_personalization"><span class="ck">ad_personalization</span><span class="v2tag">v2</span><span class="cv">denied</span></div>
+    </div>
+    <button id="consent-reset">↺ Reset consent (re-show banner)</button>
+    <p class="try" style="margin-top:22px"><b>Consent group →</b> Your job: make the Google Tag fire <i>only</i> once consent is given. In your tag's <b>Consent Settings → Require additional consent for tag to fire</b>, add <code>analytics_storage</code>. Now Preview: with the banner unanswered the tag is <b>blocked</b>; click <b>Accept</b> and watch it fire. Stretch: leave the tag on All Pages and observe how Consent Mode changes its behaviour denied → granted instead of blocking it.</p>
+    <p class="try"><b>Form group →</b> Use the form in section 04. Build a tag that fires on submit and captures the field values as variables. <b>Ecommerce group →</b> Use the buttons in section 02. Build event tags on <code>add_to_cart</code>, <code>begin_checkout</code> and <code>purchase</code>.</p>
+  </section>
 
   <!-- SECTION: THE DATALAYER -->
   <section id="datalayer">
@@ -388,38 +445,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </div>
 
+<!-- ============ CONSENT MODE v2 COOKIE BANNER ============ -->
+<div id="cookie-banner" role="dialog" aria-label="Cookie consent">
+  <div class="cb-wrap">
+    <div class="cb-text">
+      <h3>🍪 This site uses cookies</h3>
+      <p>We use cookies for analytics and advertising. Until you choose, every consent signal stays <b>denied</b> — so consent-gated tags won't fire. (This is a teaching banner; nothing is actually stored on Google's side.)</p>
+    </div>
+    <div class="cb-actions">
+      <button class="reject" id="cb-reject">Reject all</button>
+      <button class="accept" id="cb-accept">Accept all</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function () {
   "use strict";
 
-  // ---------- STEP 2: read container ID from the URL ----------
+  // ---------- STEP 2: decide which container loads ----------
+  // DEFAULT = James's teaching container. It loads when there's no ?id= in the
+  // URL (e.g. when driving demos from the front). A student's ?id=GTM-XXXX
+  // cleanly overrides it, so each student still gets ONLY their own container.
+  var DEFAULT_CONTAINER = "GTM-K89R8NG9";
+
   var params = new URLSearchParams(window.location.search);
-  var rawId = (params.get("id") || "").trim().toUpperCase();
-  var valid = /^GTM-[A-Z0-9]+$/.test(rawId);
+  var studentId = (params.get("id") || "").trim().toUpperCase();
+  var studentValid = /^GTM-[A-Z0-9]+$/.test(studentId);
 
   var statusEl = document.getElementById("status");
   var statusText = document.getElementById("status-text");
   var setupEl = document.getElementById("setup");
 
-  if (valid) {
-    // ---------- STEP 3: inject the standard GTM snippet ----------
-    (function (w, d, s, l, i) {
-      w[l] = w[l] || [];
-      w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-      var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
-      j.async = true;
-      j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-      f.parentNode.insertBefore(j, f);
-    })(window, document, "script", "dataLayer", rawId);
+  // the container actually injected: the student's if valid, else the default
+  var containerId = studentValid ? studentId : DEFAULT_CONTAINER;
 
+  // ---------- STEP 3: inject the standard GTM snippet ----------
+  (function (w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+    var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != "dataLayer" ? "&l=" + l : "";
+    j.async = true;
+    j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+    f.parentNode.insertBefore(j, f);
+  })(window, document, "script", "dataLayer", containerId);
+
+  if (studentValid) {
     statusEl.classList.add("ok");
-    statusText.innerHTML = "Container <b>" + rawId + "</b> loaded — open GTM Preview and connect to this URL.";
+    statusText.innerHTML = "Your container <b>" + studentId + "</b> is loaded — open GTM Preview and connect to this URL.";
     setupEl.hidden = true;
   } else {
-    statusEl.classList.add("bad");
-    statusText.textContent = rawId ? ("\"" + rawId + "\" isn't a valid container ID") : "No container loaded yet";
+    statusEl.classList.add("ok");
+    statusText.innerHTML = studentId
+      ? ("\"" + studentId + "\" isn't a valid ID — running the teaching container instead. Add a valid <b>?id=GTM-YOURID</b> for your own.")
+      : ("Teaching container <b>" + DEFAULT_CONTAINER + "</b> loaded. Add <b>?id=GTM-YOURID</b> to the URL to load your own.");
     setupEl.hidden = false;
   }
 
@@ -521,6 +602,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   document.getElementById("region-go").addEventListener("click", function () {
     pushEvent({ event: "region_selected", region: document.getElementById("region").value });
   });
+
+  // ---------- CONSENT MODE v2 ----------
+  // Defaults were already set to 'denied' in the <head> (before the container).
+  // Here we wire the banner's Accept/Reject to gtag('consent','update',…),
+  // mirror the state into the on-page panel, and persist the choice.
+  var CONSENT_KEYS = ["analytics_storage", "ad_storage", "ad_user_data", "ad_personalization"];
+  var banner = document.getElementById("cookie-banner");
+
+  function renderConsent(state) {
+    CONSENT_KEYS.forEach(function (k) {
+      var cell = document.querySelector('.consent-cell[data-key="' + k + '"]');
+      if (!cell) return;
+      var granted = state[k] === "granted";
+      cell.classList.toggle("granted", granted);
+      cell.classList.toggle("denied", !granted);
+      cell.querySelector(".cv").textContent = granted ? "granted" : "denied";
+    });
+  }
+
+  function applyConsent(decision) {
+    // decision: "granted" or "denied" for ALL keys (Accept all / Reject all)
+    var update = {};
+    CONSENT_KEYS.forEach(function (k) { update[k] = decision; });
+    gtag("consent", "update", update);                 // the real Consent Mode v2 call
+    pushEvent(Object.assign({ event: "consent_update" }, update)); // log it so it's visible in the inspector
+    renderConsent(update);
+    try { localStorage.setItem("hs_consent", decision); } catch (e) {}
+    banner.classList.remove("show");
+  }
+
+  document.getElementById("cb-accept").addEventListener("click", function () { applyConsent("granted"); });
+  document.getElementById("cb-reject").addEventListener("click", function () { applyConsent("denied"); });
+
+  document.getElementById("consent-reset").addEventListener("click", function () {
+    try { localStorage.removeItem("hs_consent"); } catch (e) {}
+    // reset defaults back to denied so students can replay the pending → granted flow
+    var denied = {};
+    CONSENT_KEYS.forEach(function (k) { denied[k] = "denied"; });
+    gtag("consent", "update", denied);
+    renderConsent(denied);
+    banner.classList.add("show");
+  });
+
+  // on load: restore a prior choice, or show the banner if undecided
+  (function initConsent() {
+    var saved = null;
+    try { saved = localStorage.getItem("hs_consent"); } catch (e) {}
+    if (saved === "granted" || saved === "denied") {
+      var s = {};
+      CONSENT_KEYS.forEach(function (k) { s[k] = saved; });
+      if (saved === "granted") gtag("consent", "update", s); // re-assert granted on reload
+      renderConsent(s);
+    } else {
+      setTimeout(function () { banner.classList.add("show"); }, 900);
+    }
+  })();
 
   // open the inspector once on load so green students notice it exists
   setTimeout(function () { inspector.classList.add("open"); }, 600);
