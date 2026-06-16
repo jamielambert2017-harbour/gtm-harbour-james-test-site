@@ -275,7 +275,7 @@
   <div class="wrap">
     <p class="eyebrow">Harbour.Space · Digital Analytics · GTM Week</p>
     <h1>The GTM Playground</h1>
-    <div class="sub">A safe sandbox for tags, triggers, variables & the dataLayer — built by James Humphreys (and Claude). V1.1</div>
+    <div class="sub">A safe sandbox for tags, triggers, variables & the dataLayer — built by James Humphreys</div>
     <div id="status"><span class="dot"></span><span id="status-text">Checking for a container…</span></div>
   </div>
 </header>
@@ -421,6 +421,23 @@
       <button class="push" id="region-go" type="button" style="flex:0 0 auto">Set region<span class="ev">region_selected</span></button>
     </div>
     <p class="try" style="margin-top:22px"><b>Try this →</b> Build a <b>Lookup Table</b> variable: input = your <code>region</code> Data Layer Variable, mapping <code>th → Thailand</code>, <code>gb → United Kingdom</code>, etc. Then rebuild it as a <b>RegEx Table</b> and add a default value for anything unmatched.</p>
+  </section>
+
+  <!-- SECTION: QA LAB -->
+  <section id="qa-lab">
+    <div class="eyebrow-row"><span class="sec-num">08</span><h2>QA Lab</h2></div>
+    <p class="lead">Your dev team shipped eight ecommerce pushes for review. Fire each one, inspect what actually lands (Preview / DebugView / the inspector, bottom-right), and validate it against the spec you've been given. Which pushes are correct? Which are broken — and what would each fault break in GA4?</p>
+    <div class="btn-grid">
+      <button class="push" data-qa="1" type="button">QA Push 1</button>
+      <button class="push" data-qa="2" type="button">QA Push 2</button>
+      <button class="push" data-qa="3" type="button">QA Push 3</button>
+      <button class="push" data-qa="4" type="button">QA Push 4</button>
+      <button class="push" data-qa="5" type="button">QA Push 5</button>
+      <button class="push" data-qa="6" type="button">QA Push 6</button>
+      <button class="push" data-qa="7" type="button">QA Push 7</button>
+      <button class="push" data-qa="8" type="button">QA Push 8</button>
+    </div>
+    <p class="try" style="margin-top:22px"><b>The game →</b> 1 point for spotting a fault, a bonus point for explaining what it breaks in reporting. Not every push is broken — verify, don't assume.</p>
   </section>
 
   <footer>
@@ -584,6 +601,29 @@
         pushEvent(Object.assign({ event: evName }, extra));
       }
     });
+  });
+
+  // ---------- QA Lab ----------
+  function qaItem() {
+    return { item_id: "SKU_HOODIE_01", item_name: "Harbour.Space Hoodie", item_category: "apparel", price: 29.99, quantity: 1 };
+  }
+  var QA = {
+    "1": [ { event: "add_to_cart", ecommerce: { value: 29.99, items: [ qaItem() ] } } ],
+    "2": [ { event: "add_to_cart", ecommerce: { currency: "GBP", value: 29.99, items: [ qaItem() ] } } ],
+    "3": [ { event: "view_item", ecommerce: { currency: "GBP", value: "29.99", items: [ qaItem() ] } } ],
+    "4": [ { event: "add_to_cart", ecommerce: { ecommerce: { currency: "GBP", value: 29.99, items: [ qaItem() ] } } } ],
+    "5": [ { event: "add_To_Cart", ecommerce: { currency: "GBP", value: 29.99, items: [ qaItem() ] } } ],
+    "6": [ { event: "add_to_cart", ecommerce: { currency: "GBP", value: 29.99, items: [ { item_id: "SKU_HOODIE_01", item_name: "Harbour.Space Hoodie", item_category: "apparel", price: 29.99, quantity: 2 } ] } } ],
+    "7": [ { event: "purchase", ecommerce: { currency: "GBP", value: 29.99, tax: 5.00, shipping: 4.99, items: [ qaItem() ] } } ],
+    "8": [ { event: "add_to_cart", ecommerce: { currency: "GBP", value: 29.99, items: [ qaItem() ] } },
+           { event: "add_to_cart", ecommerce: { currency: "GBP", value: 29.99, items: [ qaItem() ] } } ]
+  };
+  function qaFire(n) {
+    window.dataLayer.push({ ecommerce: null });
+    (QA[n] || []).forEach(function (p) { pushEvent(p); });
+  }
+  document.querySelectorAll("button[data-qa]").forEach(function (btn) {
+    btn.addEventListener("click", function () { qaFire(btn.getAttribute("data-qa")); });
   });
 
   // form
